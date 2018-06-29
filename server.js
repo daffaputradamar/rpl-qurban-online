@@ -22,6 +22,14 @@ app.use(passport.session())
 
 require('./config/passport')(passport)
 
+app.get("/secretDebug",
+  function(req, res, next){
+    console.log(req.get('Authorization'));
+    next();
+  }, function(req, res){
+    res.json("debugging");
+});
+
 app.use('/api/users', userRoute)
 app.use('/api/mosques', mosqueRoute)
 
@@ -30,6 +38,7 @@ app.get('/', (req, res) => {
         message: "Welcome to nothingness"
     })
 })
+
 
 app.listen(3000, () => {
     console.log('app listening in http://localhost:3000')

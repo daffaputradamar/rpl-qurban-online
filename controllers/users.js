@@ -12,6 +12,7 @@ module.exports = {
                     model: Animal
                 }]
             })
+            console.log(req.user.name)
             return res.status(200).json(users)
         } catch (err) {
             return res.status(400).send(err)
@@ -66,11 +67,11 @@ module.exports = {
     
         try {
             let newUser = {
-            name: req.body.name,
-            email: req.body.email,
-            password: req.body.password,
-            phone: req.body.phone,
-            sex: req.body.sex
+                name: req.body.name,
+                email: req.body.email,
+                password: req.body.password,
+                phone: req.body.phone,
+                sex: req.body.sex
             }
 
             let salt = await bcrypt.genSalt(10)
