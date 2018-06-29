@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
   Mosque.associate = function(models) {
     Mosque.hasMany(models.Animal, {
       foreignKey: 'mosqueId'
+    }),
+    Mosque.hasMany(models.Proof, {
+      foreignKey: 'mosqueId'
     })
   };
   return Mosque;

@@ -11,13 +11,13 @@ module.exports = {
         .catch(err => res.status(400).send(err))
     },
     create (req, res) {
-        console.log(req.params.mosqueId)
+        console.log(req.user)
         return Animal.create({
-            jenis: req.body.name,
+            jenis: req.body.jenis,
             umur: req.body.umur,
             berat: req.body.berat,
             sex: req.body.sex,
-            // userId: 1,
+            userId: req.user.id,
             mosqueId: req.params.mosqueId
         })
         .then(animal => res.status(200).send(animal))
