@@ -1,0 +1,29 @@
+extends ../templates/layout
+
+block content
+    h1= mosque.name
+    blockquote= mosque.description
+    br
+    .row
+        .col.s6
+            img.responsive-img.materialboxed(src="/profilmasjid/"+mosque.imagePath)
+        .col.s6
+            table.highlight
+                tr
+                    td Email
+                    td= mosque.email
+                tr
+                    td Nomor Telepon
+                    td= mosque.phone
+                tr
+            if user
+                if user.sex
+                    br
+                    p.center-align
+                        a.btn.teal.btn-large.pulse(href="/mosques/"+mosque.id+"/donate") Donasi
+            else
+                br
+                a.btn.green.btn-block(href="/users/register") Daftarkan diri anda untuk Donasi
+    br
+    
+

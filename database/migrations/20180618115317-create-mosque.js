@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Mosques', {
+    return queryInterface.createTable("Mosques", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,10 +12,14 @@ module.exports = {
         type: Sequelize.STRING
       },
       email: {
+        isUnique: true,
         type: Sequelize.STRING
       },
       password: {
         type: Sequelize.STRING
+      },
+      description: {
+        type: Sequelize.TEXT
       },
       phone: {
         type: Sequelize.STRING
@@ -31,6 +35,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Mosques');
+    return queryInterface.dropTable("Mosques");
   }
 };

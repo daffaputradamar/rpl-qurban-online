@@ -1,143 +1,193 @@
-const Mosque = require('../models/').Mosque
-const Animal = require('../models').Animal
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const config = require('../config/database')
+const bcrypt = require("bcryptjs");
+const passport = require("passport");
+
+//include Article Module
+let Mosque = require("../models").Mosque;
+let Animal = require("../models/").Animal;
+let Proof = require("../models/").Proof;
+
+const multer = require("multer");
+const path = require("path");
+
+const storageDonasi = multer.diskStorage({
+  destination: "./public/hewan/",
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  }
+});
+
+const uploadDonasi = multer({
+  storage: storageDonasi,
+  fileFilter: (req, file, cb) => {
+    checkFileType(file, cb);
+  }
+}).single("hewan");
+
+const storageProfil = multer.diskStorage({
+  destination: "./public/profilmasjid/",
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  }
+});
+
+const uploadProfil = multer({
+  storage: storageProfil,
+  fileFilter: (req, file, cb) => {
+    checkFileType(file, cb);
+  }
+}).single("profilmasjid");
+
+function checkFileType(file, cb) {
+  const filetypes = /jpeg|jpg|png|gif/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb("Error Image Only!");
+  }
+}
 
 module.exports = {
-    index: async (req, res) => {
-        try {
-            let mosques = await Mosque.findAll({
-                include: [{
-                    model: Animal
-                }]
-            })
-            console.log(req.user.name)
-            return res.status(200).json(mosques)
-        } catch (err) {
-            return res.status(400).send(err)
-        }
-    },
+  index: (req, res) => {
+    Mosque.findAll().then(mosques => {
+      res.render("mosques/mosques", {
+        title: "List Masjid",
+        mosques
+      });
+    });
+  },
 
-    authenticate:async (req, res) => {
-        try {
-            const email = req.body.email
-            const password = req.body.password
-    
-            let mosque = await Mosque.find({
-                where: {
-                    email
-                }
-            })
+  register: (req, res) => {
+    res.render("mosques/mosqueRegister");
+  },
 
-            if (!mosque) {
-                return res.json({
-                    success: false,
-                    msg: 'User not Found'
+  store: (req, res) => {
+    uploadProfil(req, res, err => {
+      if (err) {
+        req.flash("danger", "Tidak ada foto yang diupload");
+        res.redirect(`/mosques/register`);
+      } else {
+        if (req.file == undefined) {
+          req.flash("danger", "Tidak ada foto yang diupload");
+          res.redirect(`/mosques/register`);
+        } else {
+          let newMosque = {
+            name: req.body.name,
+            email: req.body.email,
+            username: req.body.username,
+            password: req.body.password,
+            phone: req.body.phone,
+            description: req.body.description,
+            imagePath: req.file.filename
+          };
+
+          bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(newMosque.password, salt, (err, hash) => {
+              if (err) {
+                console.log(err);
+              }
+              newMosque.password = hash;
+              Mosque.create(newMosque)
+                .then(() => {
+                  res.redirect("/mosques/login");
                 })
-            }
-
-            let isMatch = await bcrypt.compare(password, mosque.password)
-
-            if (isMatch) {
-                const token = jwt.sign({data: mosque}, config.secret, {
-                    expiresIn: '1d'
-                })
-                return res.json({
-                    success: true,
-                    token: 'JWT '+token,
-                    mosque: {
-                        id: mosque.id,
-                        name: mosque.name,
-                        email: mosque.email,
-                        phone: mosque.phone,
-                    }
-                })
-            } else {
-                return res.json({success: false, msg: "Wrong Password"})
-            }
-
-        } catch (err) {
-            return res.status(400).send(err)
+                .catch(err => console.log(err));
+            });
+          });
         }
-    },
+      }
+    });
+  },
 
-    create: async (req, res) => {
-        try {
-            let newMosque = {
-                name: req.body.name,
-                email: req.body.email,
-                password: req.body.password,
-                phone: req.body.phone
-            }
+  login: (req, res) => {
+    res.render("mosques/mosqueLogin");
+  },
 
-            let salt = await bcrypt.genSalt(10)
-            let hash = await bcrypt.hash(newMosque.password, salt)
-            newMosque.password = hash
-            let mosque = await Mosque.create(newMosque)
-            
-            return res.status(200).json(mosque)
-        } catch (err) {
-            return res.status(400).send(err)
-        }
-    },
+  authenticate: (req, res, next) => {
+    passport.authenticate("mosque", {
+      successRedirect: "/mosques/",
+      failureRedirect: "/mosques/login",
+      badRequestMessage: "Login Information Invalid",
+      failureFlash: true
+    })(req, res, next);
+  },
 
-    show: async (req, res) => {
-        try {
-            let mosque = await Mosque.findById(req.params.mosqueId, {
-                include:[{
-                    model: Animal
-                }]
+  logout: (req, res) => {
+    req.logout();
+    req.flash("success", "You are logged out");
+    res.redirect("/");
+  },
+
+  donate: (req, res) => {
+    Mosque.findById(req.params.id).then(mosque => {
+      res.render("mosques/createDonation", {
+        title: "createDonation",
+        mosque
+      });
+    });
+  },
+
+  storeDonate: (req, res) => {
+    uploadDonasi(req, res, err => {
+      if (err) {
+        req.flash("danger", "Tidak ada foto yang diupload");
+        res.redirect(`/mosques/${req.user.id}/donate`);
+      } else {
+        if (req.file == undefined) {
+          req.flash("danger", "Tidak ada foto yang diupload");
+          res.redirect(`/mosques/${req.user.id}/donate`);
+        } else {
+          let newAnimal = {
+            jenis: req.body.jenis,
+            umur: req.body.umur,
+            berat: req.body.berat,
+            proofId: null,
+            mosqueId: req.params.id,
+            userId: req.user.id,
+            imagePath: req.file.filename
+          };
+
+          Animal.create(newAnimal)
+            .then(() => {
+              req.flash("success", "Donasi telah terupload");
+              res.redirect("/mosques/" + req.params.id);
             })
-    
-            if (!mosque) {
-                return res.status(404).send({
-                message: 'Mosque Not Found',
-                });
-            }
-            return res.status(200).send(mosque);
-        } catch (err) {
-            return res.status(400).send(err)
+            .catch(err => console.log(err));
         }
-    },
+      }
+    });
+  },
 
-    update: async (req, res) => {
-        try {
-            let mosque = await Mosque.findById(req.params.mosqueId, {
-                include: [{
-                    model: Animal
-                }]
-            })
-            if (!mosque) {
-                return res.status(404).send({
-                message: 'Mosque Not Found',
-                });
-            } else {
-                let updatedMosque = await mosque.update(req.body, { fields: Object.keys(req.body) })
-                return res.status(200).send(updatedMosque)
-            }
-        } catch (err) {
-            return res.status(400).send(err)
-        }
-    },
+  donations: (req, res) => {
+    Animal.findAll({
+      where: {
+        mosqueId: req.params.id
+      },
+      include: {
+        model: Proof
+      }
+    }).then(donations => {
+      // return res.json(donations);
+      res.render("mosques/donations", {
+        title: "List Donasi",
+        donations
+      });
+    });
+  },
 
-    destroy: async (req, res) => {
-        try {
-            let mosque = await Mosque.findById(req.params.mosqueId, {
-                include: [{
-                    model: Animal
-                }]
-            })
-            if (!mosque) {
-                return res.status(404).send({
-                message: 'Mosque Not Found',
-                });
-            } else {
-                let destroyedMosque = await Mosque.destroy()
-                return res.status(200).json(destroyedMosque)
-            }
-        } catch (err) {
-            return res.status(400).send(err)
-        }
-    }
-}
+  show: (req, res) => {
+    Mosque.findById(req.params.id).then(mosque => {
+      res.render("mosques/mosque", {
+        title: "Masjid",
+        mosque
+      });
+    });
+  }
+};

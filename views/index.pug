@@ -1,0 +1,93 @@
+extends templates/layout
+
+block landingpage
+
+    #index-banner.parallax-container(style="height: 50%")
+        .section.no-pad-bot
+            .container
+                br
+                br
+                h1.header.center.text-lighten-2 Mari Qurban!
+                .row.center
+                    h5.header.col.s12.light Membantu Sesama, Raih Pahala Sebanyak - banyaknya
+                .row.center
+                    .col.s6.right-align
+                        a.waves-effect.waves-light.btn.blue.darken-1.btn-large(href='/users/register', role='button') Daftar Sebagai User
+                    .col.s6.left-align
+                        a.waves-effect.waves-light.btn.cyan.darken-1.btn-large(href='/mosques/register', role='button') Daftar Sebagai Masjid
+                .row.center
+                    h6.header.col.s12
+                        a.white-text(href='/mosques', role='button') Lihat Masjid yang telah terdaftar
+                            i.tiny.material-icons open_in_new
+                br
+                br
+        .parallax
+            img(src="/assets/index/kambing2.jpg")
+
+    .container
+        .section
+            //- Icon Section
+            .row
+                .col.s12.m4
+                    .icon-block
+                        h2.center.teal-text.lighten-2
+                            i.material-icons flash_on
+                        h5.center Loading Resource yang Cepat
+                        p.light
+                            | Kami menggunakan sebuah framework untuk mempermudah serta mempercepat eksekusi query sehingga akan lebih mempercepat proses loading resource.
+                .col.s12.m4
+                    .icon-block
+                        h2.center.teal-text.lighten-2
+                            i.material-icons group
+                        h5.center Memberi Kenyamanan pada User
+                        p.light
+                            | Dengan menggunakan Materialize CSS, kami dapat dengan mudah memubuat tampilan website yang simple namun tetap menarik.
+                .col.s12.m4
+                    .icon-block
+                        h2.center.teal-text.lighten-2
+                            i.material-icons settings
+                        h5.center Sangat Mudah untuk Digunakan
+                        p.light
+                            | Dengan memikirkan semua kebutuhkan user dengan seksama, kami telah membuat navigasi website yang sangat mudah digunakan.
+    .parallax-container.valign-wrapper
+        .section.no-pad-bot
+            .container
+                .row.center
+                    h5.header.col.s12.light "Binatang Qurban, bagi pemiliknya (yang berkurban) akan diberi pahala setiap rambut binatang itu satu kebaikan". (HR)
+        .parallax
+            img(src="/assets/index/sapi3.jpg")
+    .container
+        .section
+            .row
+                .col.s12.center
+                    h3
+                        i.mdi-content-send.brown-text
+                    h4 Tim Kami
+                    .row
+                        .col.s12.m4
+                            .icon-block
+                                h2.center.teal-text.lighten-2
+                                    i.material-icons person
+                                h5.center Linda Puspita Tarumawardani
+                                h6.light - UI Designer -
+                        .col.s12.m4
+                            .icon-block
+                                h2.center.teal-text.lighten-2
+                                    i.material-icons person
+                                h5.center Daffa Akbar Dwiputra Damarriyanto
+                                h6.light - Backend Developer -
+                        .col.s12.m4
+                            .icon-block
+                                h2.center.teal-text.lighten-2
+                                    i.material-icons person
+                                h5.center Fahad
+                                h6.light - UX Researcher -
+    .parallax-container.valign-wrapper
+        .section.no-pad-bot
+            .container
+                .row.center
+                    h5.header.col.s12.light Terima Kasih telah berkunjung ke website kami!
+        .parallax
+            img(src="/assets/index/domba3.jpg")
+
+

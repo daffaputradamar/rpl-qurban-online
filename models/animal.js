@@ -1,18 +1,25 @@
-'use strict';
+"use strict";
 module.exports = (sequelize, DataTypes) => {
-  var Animal = sequelize.define('Animal', {
-    jenis: DataTypes.STRING,
-    umur: DataTypes.INTEGER,
-    berat: DataTypes.INTEGER,
-    sex: DataTypes.CHAR
-  }, {});
+  var Animal = sequelize.define(
+    "Animal",
+    {
+      jenis: DataTypes.STRING,
+      umur: DataTypes.INTEGER,
+      berat: DataTypes.INTEGER,
+      imagePath: DataTypes.STRING
+    },
+    {}
+  );
   Animal.associate = function(models) {
     Animal.belongsTo(models.Mosque, {
-      foreignKey: 'mosqueId'
+      foreignKey: "mosqueId"
     }),
-    Animal.belongsTo(models.User, {
-      foreignKey: 'userId'
-    })
-  }
+      Animal.belongsTo(models.User, {
+        foreignKey: "userId"
+      }),
+      Animal.belongsTo(models.Proof, {
+        foreignKey: "proofId"
+      });
+  };
   return Animal;
 };

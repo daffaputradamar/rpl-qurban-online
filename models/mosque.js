@@ -1,18 +1,30 @@
-'use strict';
+"use strict";
 module.exports = (sequelize, DataTypes) => {
-  var Mosque = sequelize.define('Mosque', {
-    name: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    phone: DataTypes.STRING
-  }, {});
+  var Mosque = sequelize.define(
+    "Mosque",
+    {
+      name: DataTypes.STRING,
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        validate: {
+          isEmail: true
+        }
+      },
+      password: DataTypes.STRING,
+      phone: DataTypes.STRING,
+      description: DataTypes.TEXT,
+      imagePath: DataTypes.STRING
+    },
+    {}
+  );
   Mosque.associate = function(models) {
     Mosque.hasMany(models.Animal, {
-      foreignKey: 'mosqueId'
+      foreignKey: "mosqueId"
     }),
-    Mosque.hasMany(models.Proof, {
-      foreignKey: 'mosqueId'
-    })
+      Mosque.hasMany(models.Proof, {
+        foreignKey: "mosqueId"
+      });
   };
   return Mosque;
 };

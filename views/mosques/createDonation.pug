@@ -1,0 +1,30 @@
+extends ../templates/layout
+
+block content
+    h1 Donasi
+    br
+    if msg !== undefined ? msg : ''
+    form.col.s12(action="/mosques/"+mosque.id+"/donate", method="post" enctype="multipart/form-data")
+        .row
+            .input-field.col.s12
+                input#jenis(placeholder="Sapi, Kambing, dll..." type="text" name="jenis")
+                label(for="jenis") Jenis
+        .row
+            .input-field.col.s12
+                input#umur(type="text" name="umur")
+                label(for="umur") Umur
+        .row
+            .input-field.col.s12
+                input#berat(type="text" name="berat")
+                label(for="berat") Berat
+        .row
+            .file-field.input-field
+                .btn.blue.lighten-1
+                    span Foto Hewan
+                    input(type="file" name="hewan")
+                .file-path-wrapper
+                    input.file-path.validate(type="text")
+        button.btn.waves-effect.waves-light(type="submit")
+            | Submit
+            i.material-icons.right send
+    br

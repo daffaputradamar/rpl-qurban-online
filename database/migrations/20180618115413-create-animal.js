@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Animals', {
+    return queryInterface.createTable("Animals", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -17,9 +17,6 @@ module.exports = {
       berat: {
         type: Sequelize.INTEGER
       },
-      sex: {
-        type: Sequelize.CHAR
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -31,20 +28,27 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Users',
-          key: 'id'
+          model: "Users",
+          key: "id"
         }
       },
       mosqueId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Mosques',
-          key: 'id'
+          model: "Mosques",
+          key: "id"
+        }
+      },
+      proofId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Proofs",
+          key: "id"
         }
       }
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Animals');
+    return queryInterface.dropTable("Animals");
   }
 };

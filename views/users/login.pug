@@ -1,0 +1,18 @@
+extends ../templates/layout
+
+block content
+    h3 Login sebagai User
+    form.col.s12(action="/users/login", method="post")
+        .row
+            .input-field.col.s12
+                input#email.validate(type="email" name="email")
+                label(for="email") Email
+        .row
+            .input-field.col.s12
+                input#password.validate(type="password" name="password")
+                label(for="password") Password
+
+        button.btn.waves-effect.waves-light(type="submit")
+            | Submit
+            i.material-icons.right send
+    br

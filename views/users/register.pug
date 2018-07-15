@@ -1,0 +1,49 @@
+extends ../templates/layout
+
+block content
+    h3 Register sebagai User
+    form.col.s12(action="/users/register", method="post" enctype="multipart/form-data")
+        .row
+            .input-field.col.s12
+                input#nama(type="text" name="name")
+                label(for="nama") Nama
+        .row
+            .input-field.col.s12
+                input#phone(type="text" name="phone")
+                label(for="phone") Nomor Telepon
+        .row
+            .input-field.col.s12
+                //- select
+                    option(value="" disabled="" selected="") Pilih
+                    option(value="M" name="sex") Laki - Laki
+                    option(value="F" name="sex") Perempuan
+                p Jenis Kelamin
+                p
+                    label
+                        input.with-gap(name="sex" value="M" type="radio" checked="")
+                        span Laki - Laki
+                p   
+                    label
+                        input.with-gap(name="sex" value="F" type="radio")
+                        span Perempuan
+        .row
+            .input-field.col.s12
+                input#email.validate(type="email" name="email")
+                label(for="email") Email
+        .row
+            .input-field.col.s12
+                input#password.validate(type="password" name="password")
+                label(for="password") Password
+
+        .row
+            .file-field.input-field
+                .btn.blue.lighten-1
+                    span Foto Profile
+                    input(type="file" name="profiluser")
+                .file-path-wrapper
+                    input.file-path.validate(type="text")
+        
+        button.btn.waves-effect.waves-light(type="submit")
+            | Submit
+            i.material-icons.right send
+    br

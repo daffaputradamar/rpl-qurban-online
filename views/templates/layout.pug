@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title Qurban Online
+        
+        link(rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png")
+        link(rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png")
+        link(rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png")
+        link(rel="manifest" href="/favicon/site.webmanifest")
+        link(rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5")
+        link(rel="shortcut icon" href="/favicon/favicon.ico")
+        meta(name="msapplication-TileColor" content="#2b5797")
+        meta(name="msapplication-config" content="/favicon/browserconfig.xml")
+        meta(name="theme-color" content="#ffffff")
+
+
+        link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
+        //- link(rel="stylesheet", href="/bootstrap/css/bootstrap.min.css")
+        link(rel="stylesheet", href="/materialize/css/materialize.min.css")
+        link(rel="stylesheet", href="/css/style.css")
+    body
+        nav.teal.lighten-2
+            .nav-wrapper.container
+                if user
+                    a.brand-logo(href="/mosques") Qurban Online
+                else
+                    a.brand-logo(href="/") Qurban Online
+                a.sidenav-trigger(href="#" data-target="mobile-demo")
+                    i.material-icons menu
+                ul#mobile-demo.sidenav
+                    if user 
+                        li
+                            a(href="/mosques") Home
+                        if user.sex === undefined
+                            li
+                                a(href=`/mosques/${user.id}/donations`) Donasi
+                            li
+                                a.dropdown-trigger(href="#!" data-target="dropdownmobile3")
+                                    = user.name
+                                    i.material-icons.right arrow_drop_down
+                                ul#dropdownmobile3.dropdown-content
+                                    li
+                                        a(href="/mosques/"+user.id) Profil Saya
+                                    li
+                                        a(href="/users/logout") Logout
+                            li
+                        else
+                            li
+                                a(href=`/users/${user.id}/donations`) Donasi Saya
+                            li
+                                a.dropdown-trigger(href="#!" data-target="dropdownmobile2")
+                                    = user.name
+                                    i.material-icons.right arrow_drop_down
+                                ul#dropdownmobile2.dropdown-content
+                                    li
+                                        a(href="/users/"+user.id) Profil Saya
+                                    li
+                                        a(href="/users/logout") Logout
+                    else
+                        li
+                            a(href="/") Home
+                        li
+                            a.dropdown-trigger(href="#!" data-target="dropdownmobile1")
+                                | Login
+                                i.material-icons.right arrow_drop_down
+                            ul#dropdownmobile1.dropdown-content
+                                li
+                                    a(href="/users/login") Login User
+                                li
+                                    a(href="/mosques/login") Login Masjid
+                        li
+                            a.dropdown-trigger(href="#!" data-target="dropdownregister2")
+                                | Daftar
+                                i.material-icons.right arrow_drop_down
+                            ul#dropdownregister2.dropdown-content
+                                li
+                                    a(href="/users/register") Daftar User
+                                li
+                                    a(href="/mosques/register") Daftar Masjid
+
+                ul.right.hide-on-med-and-down
+                    if user 
+                        li
+                            a(href="/mosques") Home
+                        if user.sex === undefined
+                            li
+                                a(href=`/mosques/${user.id}/donations`) Donasi
+                            li
+                                a.dropdown-trigger(href="#!" data-target="dropdown3")
+                                    = user.name
+                                    i.material-icons.right arrow_drop_down
+                                ul#dropdown3.dropdown-content
+                                    li
+                                        a(href="/mosques/"+user.id) Profil Saya
+                                    li
+                                        a(href="/users/logout") Logout
+                            li
+                        else
+                            li
+                                a(href=`/users/${user.id}/donations`) Donasi Saya
+                            li
+                                a.dropdown-trigger(href="#!" data-target="dropdown2")
+                                    = user.name
+                                    i.material-icons.right arrow_drop_down
+                                ul#dropdown2.dropdown-content
+                                    li
+                                        a(href="/users/"+user.id) Profil Saya
+                                    li
+                                        a(href="/users/logout") Logout
+                    else
+                        li
+                            a(href="/") Home
+                        li
+                            a.dropdown-trigger(href="#!" data-target="dropdown1")
+                                | Login
+                                i.material-icons.right arrow_drop_down
+                            ul#dropdown1.dropdown-content
+                                li
+                                    a(href="/users/login") Login User
+                                li
+                                    a(href="/mosques/login") Login Masjid
+                        li
+                            a.dropdown-trigger(href="#!" data-target="dropdownregister1")
+                                | Daftar
+                                i.material-icons.right arrow_drop_down
+                            ul#dropdownregister1.dropdown-content
+                                li
+                                    a(href="/users/register") Daftar User
+                                li
+                                    a(href="/mosques/register") Daftar Masjid
+        .container
+            != messages('message', locals)
+            if errors
+                each error, i in errors
+                    div(class="card-panel red") #{error.msg}
+        block landingpage
+        .container
+            block content
+        footer.page-footer.teal.lighten-2
+            .container
+                .row
+                    .col.l6.s12
+                        h5.white-text Polikteknik Negeri Malang
+                        p.grey-text.text-lighten-4
+                            | Kami adalah sebuah tim yang terdiri dari mahasiswa - mahasiswa yang bekerja pada projek ini sebagaimana seperti kerja purna waktu. Seberapapun kritik dan saran akan sangat kita apresiasi demi membantu melanjutkan projek ini.
+                    .col.l3.s12.offset-l3
+                        h5.white-text Connect
+                        ul
+                            li
+                                a.white-text(href="https://github.com/daffaputradamar") Github
+            .footer-copyright
+                .container
+                    | Copyright &copy; 2018
+
+
+        script(src="/jquery/jquery.min.js")
+        script(src="/popper/popper.min.js")        
+        //- script(src="/bootstrap/js/bootstrap.min.js")
+        script(src="/materialize/js/materialize.min.js")
+        script(src="/js/script.js")
+        
+        
+        

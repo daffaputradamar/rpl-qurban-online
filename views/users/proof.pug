@@ -1,0 +1,20 @@
+extends ../templates/layout
+
+block content
+    h3 Bukti
+    if user
+        .row
+            .col.s8.offset-s2
+                .card.hoverable
+                    .card-image
+                        img.materialboxed(src=`/bukti/${proof.imagePath}`)
+                    .card-stacked
+                        .card-content
+                            span.card-title Pesan
+                            p
+                                = proof.pesan
+                        .card-action.center-align
+                            if user.sex !== undefined
+                                a.btn(href="/users/"+proof.userId+"/donations") Kembali
+                            else
+                                a.btn(href="/mosques/"+proof.mosqueId+"/donations") Kembali

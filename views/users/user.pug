@@ -1,0 +1,19 @@
+extends ../templates/layout
+
+block content
+    h1= pengguna.name
+    h5 Keterangan
+    br
+    .row
+        .col.s6
+            img.responsive-img.materialboxed(src="/profiluser/"+pengguna.imagePath)
+        .col.s6
+            table.highlight
+                tr
+                    td Email
+                    td= pengguna.email
+                tr
+                    td Nomor Telepon
+                    td= pengguna.phone
+    br
+

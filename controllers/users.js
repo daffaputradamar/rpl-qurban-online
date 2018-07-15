@@ -1,161 +1,189 @@
-const User = require('../models/').User
-const Animal = require('../models').Animal
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const config = require('../config/database')
+const bcrypt = require("bcryptjs");
+const passport = require("passport");
+
+//include Article Module
+let User = require("../models").User;
+let Animal = require("../models").Animal;
+let Proof = require("../models").Proof;
+
+const multer = require("multer");
+const path = require("path");
+
+const storageBukti = multer.diskStorage({
+  destination: "./public/bukti/",
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  }
+});
+
+const uploadBukti = multer({
+  storage: storageBukti,
+  fileFilter: (req, file, cb) => {
+    checkFileType(file, cb);
+  }
+}).single("bukti");
+
+const storageProfil = multer.diskStorage({
+  destination: "./public/profiluser/",
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  }
+});
+
+const uploadProfil = multer({
+  storage: storageProfil,
+  fileFilter: (req, file, cb) => {
+    checkFileType(file, cb);
+  }
+}).single("profiluser");
+
+function checkFileType(file, cb) {
+  const filetypes = /jpeg|jpg|png|gif/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb("Error Image Only!");
+  }
+}
 
 module.exports = {
-    index:async (req, res) => {
-        try {
-            let users = await User.findAll({
-                include: [{
-                    model: Animal
-                }]
-            })
-            console.log(req.user.name)
-            return res.status(200).json(users)
-        } catch (err) {
-            return res.status(400).send(err)
-        }
-    },
+  register: (req, res) => {
+    res.render("users/register");
+  },
 
-    authenticate:async (req, res) => {
-        try {
-            const email = req.body.email
-            const password = req.body.password
-    
-            let user = await User.find({
-                where: {
-                    email
-                }
-            })
+  store: (req, res) => {
+    uploadProfil(req, res, err => {
+      if (err) {
+        req.flash("danger", "Tidak ada foto yang diupload");
+        res.redirect(`/users/register`);
+      } else {
+        if (req.file == undefined) {
+          req.flash("danger", "Tidak ada foto yang diupload");
+          res.redirect(`/users/register`);
+        } else {
+          let newUser = {
+            name: req.body.name,
+            email: req.body.email,
+            username: req.body.username,
+            password: req.body.password,
+            phone: req.body.phone,
+            sex: req.body.sex,
+            imagePath: req.file.filename
+          };
 
-            if (!user) {
-                return res.json({
-                    success: false,
-                    msg: 'User not Found'
+          bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(newUser.password, salt, (err, hash) => {
+              if (err) {
+                console.log(err);
+              }
+              newUser.password = hash;
+              User.create(newUser)
+                .then(() => {
+                  // req.flash("success", "You are now registered and can log in");
+                  res.redirect("/users/login");
                 })
-            }
+                .catch(err => console.log(err));
+            });
+          });
+        }
+      }
+    });
+  },
 
-            let isMatch = await bcrypt.compare(password, user.password)
+  login: (req, res) => {
+    res.render("users/login");
+  },
 
-            if (isMatch) {
-                const token = jwt.sign({data: user}, config.secret, {
-                    expiresIn: '1d'
+  authenticate: (req, res, next) => {
+    passport.authenticate("user", {
+      successRedirect: "/mosques/",
+      failureRedirect: "/users/login",
+      badRequestMessage: "Login Information Invalid",
+      failureFlash: true
+    })(req, res, next);
+  },
+
+  logout: (req, res) => {
+    req.logout();
+    // req.flash("success", "You are logged out");
+    res.redirect("/");
+  },
+
+  donation: (req, res) => {
+    Proof.find({
+      where: {
+        animalId: req.params.donationId
+      }
+    }).then(proof => {
+      res.render("users/proof", {
+        proof
+      });
+    });
+  },
+
+  donations: (req, res) => {
+    Animal.findAll({
+      where: {
+        userId: req.params.id
+      },
+      include: {
+        model: Proof
+      }
+    }).then(donations => {
+      res.render("users/donationsUser", {
+        title: "Donasi",
+        donations
+      });
+    });
+  },
+
+  proof: (req, res) => {
+    uploadBukti(req, res, err => {
+      if (err) {
+        req.flash("danger", "Tidak ada foto yang diupload");
+        res.redirect(`/mosques/${req.user.id}/donations`);
+      } else {
+        if (req.file == undefined) {
+          req.flash("danger", "Tidak ada foto yang diupload");
+          res.redirect(`/mosques/${req.user.id}/donations`);
+        } else {
+          let newProof = {
+            pesan: req.body.pesan,
+            userId: req.body.userId,
+            mosqueId: req.body.mosqueId,
+            animalId: req.body.animalId,
+            imagePath: req.file.filename
+          };
+          Proof.create(newProof).then(proof => {
+            Animal.findById(proof.animalId).then(animal => {
+              animal
+                .update({
+                  proofId: proof.id
                 })
-                return res.json({
-                    success: true,
-                    token: 'JWT '+token,
-                    user: {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        phone: user.phone,
-                        sex: user.sex
-                    }
-                })
-            } else {
-                return res.json({success: false, msg: "Wrong Password"})
-            }
-
-        } catch (err) {
-            return res.status(400).send(err)
-        }
-    },
-
-    create:async (req, res) => {
-    
-        try {
-            let newUser = {
-                name: req.body.name,
-                email: req.body.email,
-                password: req.body.password,
-                phone: req.body.phone,
-                sex: req.body.sex
-            }
-
-            let salt = await bcrypt.genSalt(10)
-            let hash = await bcrypt.hash(newUser.password, salt)
-            newUser.password = hash
-            let user = await User.create(newUser)
-            return res.status(200).json(user)            
-        } catch (err) {
-            return res.status(400).json(err)
-        }
-
-
-
-        // bcrypt.genSalt(10, (err, salt) => {
-        //     bcrypt.hash(newUser.password, salt, (err, hash) => {
-        //         if(err) throw err
-        //         newUser.password = hash
-        //         return User.create(newUser)
-        //         .then(user => res.status(200).send(user))
-        //         .catch(error => res.status(400).send(error))
-        //     })
-        // })
-
-        // return User.create(newUser)
-        // .then(user => res.status(200).send(user))
-        // .catch(error => res.status(400).send(error))
-    },
-
-    show:async (req, res) => {
-        try {
-            let user = await User.findById(req.params.userId, {
-                include:[{
-                    model: Animal
-                }]
-            })
-            if (!user) {
-                return res.status(404).send({
-                  message: 'User Not Found',
+                .then(() => {
+                  req.flash("success", "Bukti telah dikirim");
+                  res.redirect(`/mosques/${newProof.mosqueId}/donations`);
                 });
-            }
-            return res.status(200).send(user);
-        } catch (err) {
-            return res.status(400).send(err)
+            });
+          });
         }
-    },
+      }
+    });
+  },
 
-    update:async (req, res) => {
-        try {
-            let user = await User.findById(req.params.userId, {
-                include: [{
-                    model: Animal
-                }]
-            })
-            if (!user) {
-                return res.status(404).json({
-                message: 'User Not Found',
-                });
-            } else {
-                let updatedUser = await user.update(req.body, { fields: Object.keys(req.body) })
-                return res.status(200).json(updatedUser)
-            }
-
-        } catch (err) {
-            res.status(400).json(err)
-        }
-    },
-
-    destroy:async (req, res) => {
-        try {
-            let user = await User.findById(req.params.userId, {
-                include: [{
-                    model: Animal
-                }]
-            })
-            if (!user) {
-                return res.status(404).send({
-                message: 'User Not Found',
-                });
-            } else {
-                let destroyedUser = await user.destroy()
-                return res.status(200).json(destroyedUser)
-            }
-        } catch (err) {
-            return res.status(400).send(err)
-        }
-    }
-}
+  show: (req, res) => {
+    User.findById(req.params.id).then(user => {
+      res.render("users/user", {
+        pengguna: user
+      });
+    });
+  }
+};

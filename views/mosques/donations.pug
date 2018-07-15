@@ -1,0 +1,57 @@
+extends ../templates/layout
+
+block content
+    h3.center-align #{title}
+    br
+    if msg !== undefined ? msg : ''
+    table.highlight.centered
+        if user
+            thead
+                tr
+                    th(scope='col') Foto Hewan
+                    th(scope='col') Jenis
+                    th(scope='col') Umur
+                    th(scope='col') Berat
+                    th(scope='col') Didonasikan Oleh
+                    th(scope='col') Konfirmasi
+            tbody
+                each donation in donations
+                    tr
+                        td
+                            img.responsive-img.materialboxed.smallImages(src="/hewan/"+donation.imagePath)
+                        td= donation.jenis
+                        td= donation.umur
+                        td= donation.berat
+                        td
+                            a(href=`/users/${donation.userId}`) Detil user
+                        if donation.proofId !== null
+                            td
+                                a.waves-effect.waves-light(href=`/users/${donation.userId}/donations/${donation.id}`) Lihat Bukti
+                                    i.tiny.material-icons open_in_new
+                        else
+                            td
+                                a.waves-effect.waves-light.modal-trigger(href="#modal1") Belum terkonfirmasi
+                                #modal1.modal
+                                    .modal-content
+                                        h4 Lampirkan Bukti
+                                        .divider
+                                        form.col.s12(action="/users/proofs", method="post" enctype="multipart/form-data")
+                                            .row
+                                                .file-field.input-field
+                                                    .btn.blue.lighten-1
+                                                        span Foto Bukti
+                                                        input(type="file" name="bukti")
+                                                    .file-path-wrapper
+                                                        input.file-path.validate(type="text")
+                                            .row
+                                                input(type="hidden" name="userId" value=donation.userId)
+                                                input(type="hidden" name="mosqueId" value=user.id)
+                                                input(type="hidden" name="animalId" value=donation.id)
+                                                .input-field.col.s12
+                                                    input#pesan(type="text" name="pesan")
+                                                    label(for="pesan") Pesan
+
+                                            button.btn.waves-effect.waves-light(type="submit")
+                                                | Submit
+                                                i.material-icons.right send
+    br

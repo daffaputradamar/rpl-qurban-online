@@ -1,10 +1,22 @@
-# qurban-online-backend
+# Qurban Online
 
-1. install all the dependencies
-`npm install`
+First and foremost you need to install Node js.
 
-2. `sequelize db:create` to create the database
+## Quick Start
 
-3. `sequelize db:migrate` to migrate all the migrations
+```bash
+# install the sequelize-cli with the command
+$npm install sequelize-cli -g
 
-4. to run the server `node server.js`
+# install all the dependencies
+$npm install
+
+# create the database
+$sequelize db:create
+
+# migrate all the migrations
+$sequelize db:migrate
+
+#run the server
+$node server.js
+```

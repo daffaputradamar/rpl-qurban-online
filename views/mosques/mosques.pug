@@ -1,0 +1,22 @@
+extends ../templates/layout
+
+block content
+    h3.center-align #{title}
+    .divider
+    each mosque, i in mosques
+        .row
+            .col.s12
+                .card.hoverable.horizontal
+                    .card-image
+                        img(src="/profilmasjid/"+mosque.imagePath)
+                    .card-stacked
+                        .card-content
+                            span.card-title= mosque.name
+                            p
+                                = mosque.description
+                        .card-action.center-align
+                            a(href="/mosques/"+mosque.id) Detil
+        br
+
+
+    br

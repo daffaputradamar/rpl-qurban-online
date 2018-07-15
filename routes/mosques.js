@@ -1,21 +1,53 @@
-const express = require('express')
-const router = express.Router()
-const passport = require('passport')
+const express = require("express");
+const router = express.Router();
 
-const mosquesController = require('../controllers/mosques')
-const animalsController = require('../controllers/animals')
+const MosquesController = require("../controllers/mosques");
 
-router.get('/', passport.authenticate('jwt-mosque', {session: false}), mosquesController.index)
-router.post('/authenticate', mosquesController.authenticate)
-router.post('/',mosquesController.create)
-router.get('/:mosqueId',mosquesController.show)
-router.put('/:mosqueId', mosquesController.update)
-router.delete('/:mosqueId', mosquesController.destroy)
+//Get all Mosques
+router.get("/", MosquesController.index);
 
-router.get('/:mosqueId/animals/', passport.authenticate('jwt-mosque', {session: false}), animalsController.index)
-router.post('/:mosqueId/animals/', passport.authenticate('jwt-user', {session: false}), animalsController.create)
-router.get('/:mosqueId/animals/:animalId',animalsController.show)
-router.put('/:mosqueId/animals/:animalId', animalsController.update)
-router.delete('/:mosqueId/animals/:animalId', animalsController.destroy)
+//Register form
+router.get("/register", MosquesController.register);
 
-module.exports = router
+router.post("/register", MosquesController.store);
+
+//Login form
+router.get("/login", notAuthenticated, MosquesController.login);
+
+//Login process
+router.post("/login", notAuthenticated, MosquesController.authenticate);
+
+//Logout
+router.get("/logout", ensureAuthenticated, MosquesController.logout);
+
+//Insert a Donation
+router.get("/:id/donate", ensureAuthenticated, MosquesController.donate);
+
+//Insert a Donation
+router.post("/:id/donate", ensureAuthenticated, MosquesController.storeDonate);
+
+//Get all Donation
+router.get("/:id/donations", ensureAuthenticated, MosquesController.donations);
+
+//Get a Mosque
+router.get("/:id", MosquesController.show);
+
+//Access control
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    req.flash("danger", "Please Log In");
+    res.redirect("/users/login");
+  }
+}
+
+function notAuthenticated(req, res, next) {
+  if (!req.isAuthenticated()) {
+    return next();
+  } else {
+    res.redirect("/mosques");
+  }
+}
+
+module.exports = router;

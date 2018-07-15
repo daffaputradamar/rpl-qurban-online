@@ -1,15 +1,21 @@
-'use strict';
+"use strict";
 module.exports = (sequelize, DataTypes) => {
-  var Proof = sequelize.define('Proof', {
-    image: DataTypes.STRING
-  }, {});
+  var Proof = sequelize.define(
+    "Proof",
+    {
+      pesan: DataTypes.TEXT,
+      imagePath: DataTypes.STRING,
+      animalId: DataTypes.INTEGER
+    },
+    {}
+  );
   Proof.associate = function(models) {
     Proof.belongsTo(models.Mosque, {
-      foreignKey: 'mosqueId'
+      foreignKey: "mosqueId"
     }),
-    Proof.belongsTo(models.User, {
-      foreignKey: 'userId'
-    })
+      Proof.belongsTo(models.User, {
+        foreignKey: "userId"
+      });
   };
   return Proof;
 };
