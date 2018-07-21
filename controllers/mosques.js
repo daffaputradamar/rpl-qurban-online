@@ -83,6 +83,7 @@ module.exports = {
             email: req.body.email,
             username: req.body.username,
             password: req.body.password,
+            alamat: req.body.alamat,
             phone: req.body.phone,
             description: req.body.description,
             imagePath: req.file.filename

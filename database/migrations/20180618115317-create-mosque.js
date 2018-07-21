@@ -21,6 +21,9 @@ module.exports = {
       description: {
         type: Sequelize.TEXT
       },
+      alamat: {
+        type: Sequelize.STRING
+      },
       phone: {
         type: Sequelize.STRING
       },

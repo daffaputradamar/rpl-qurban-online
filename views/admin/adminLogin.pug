@@ -1,0 +1,20 @@
+extends ../templates/layout
+
+block content
+    h3 Login
+
+    form.col.s12(action="/admin/login", method="post")
+        .row
+            .input-field.col.s12
+                input#username(type="text" name="username")
+                label(for="username") Username
+        .row
+            .input-field.col.s12
+                input#password(type="password" name="password")
+                label(for="password") Password
+
+        button.btn.waves-effect.waves-light(type="submit")
+            | Submit
+            i.material-icons.right send
+    
+    br

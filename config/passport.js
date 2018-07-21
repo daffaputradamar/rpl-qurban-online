@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 
 const User = require("../models").User;
 const Mosque = require("../models").Mosque;
+const Admin = require("../models").Admin;
 const config = require("./database");
 
 module.exports = passport => {
@@ -115,24 +116,58 @@ module.exports = passport => {
     )
   );
 
+  passport.use(
+    "admin",
+    new LocalStrategy(
+      {
+        usernameField: "username",
+        passwordField: "password"
+      },
+      (username, password, done) => {
+        Admin.findOne({
+          where: {
+            username
+          }
+        })
+          .then(admin => {
+            if (!admin) {
+              return done(null, false, { message: "Unauthorized User" });
+            } else {
+              return done(null, admin);
+            }
+          })
+          .catch(err => done(err, false));
+      }
+    )
+  );
+
   passport.serializeUser(function(user, done) {
-    done(null, user.email);
+    done(null, user);
   });
 
-  passport.deserializeUser(function(email, done) {
+  passport.deserializeUser(function(user, done) {
+    // console.log(user);
     User.find({
       where: {
-        email
+        email: user.email
       }
-    }).then(user => {
-      if (!user) {
+    }).then(pengguna => {
+      if (!pengguna) {
         Mosque.find({
           where: {
-            email
+            email: user.email
           }
-        }).then(mosque => done(null, mosque));
+        }).then(mosque => {
+          if (!mosque) {
+            Admin.find({
+              username: user.username
+            }).then(admin => done(null, admin));
+          } else {
+            return done(null, mosque);
+          }
+        });
       } else {
-        return done(null, user);
+        return done(null, pengguna);
       }
     });
   });

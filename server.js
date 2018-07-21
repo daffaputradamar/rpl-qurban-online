@@ -12,6 +12,7 @@ const mosqueApiRoute = require("./routes/api/mosques");
 
 const userRoute = require("./routes/users");
 const mosqueRoute = require("./routes/mosques");
+const adminRoute = require("./routes/admin");
 
 const app = express();
 
@@ -94,6 +95,7 @@ app.use("/api/mosques", mosqueApiRoute);
 //Web routes
 app.use("/users", userRoute);
 app.use("/mosques", mosqueRoute);
+app.use("/admin", adminRoute);
 
 //Home route
 app.get("/", (req, res) => {

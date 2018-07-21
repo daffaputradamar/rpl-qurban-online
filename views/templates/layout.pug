@@ -86,18 +86,28 @@ html(lang="en")
                         li
                             a(href="/mosques") Home
                         if user.sex === undefined
-                            li
-                                a(href=`/mosques/${user.id}/donations`) Donasi
-                            li
-                                a.dropdown-trigger(href="#!" data-target="dropdown3")
-                                    = user.name
-                                    i.material-icons.right arrow_drop_down
-                                ul#dropdown3.dropdown-content
-                                    li
-                                        a(href="/mosques/"+user.id) Profil Saya
-                                    li
-                                        a(href="/users/logout") Logout
-                            li
+                            if user.username !== undefined
+                                li
+                                    a.dropdown-trigger(href="#!" data-target="dropdown4")
+                                        = user.username
+                                        i.material-icons.right arrow_drop_down
+                                    ul#dropdown4.dropdown-content
+                                        li
+                                            a(href="/admin") Dashboard
+                                        li
+                                            a(href="/admin/logout") Logout
+                            else
+                                li
+                                    a(href=`/mosques/${user.id}/donations`) Donasi
+                                li
+                                    a.dropdown-trigger(href="#!" data-target="dropdown3")
+                                        = user.name
+                                        i.material-icons.right arrow_drop_down
+                                    ul#dropdown3.dropdown-content
+                                        li
+                                            a(href="/mosques/"+user.id) Profil Saya
+                                        li
+                                            a(href="/users/logout") Logout
                         else
                             li
                                 a(href=`/users/${user.id}/donations`) Donasi Saya

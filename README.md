@@ -17,6 +17,9 @@ $sequelize db:create
 # migrate all the migrations
 $sequelize db:migrate
 
+# seed all the seeders
+$sequelize db:seed:all
+
 #run the server
 $node server.js
 ```

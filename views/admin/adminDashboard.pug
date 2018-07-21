@@ -1,0 +1,39 @@
+extends ../templates/layout
+
+block content
+    h3 List User
+    table.highlight.centered
+        if user
+            thead
+                tr
+                    th(scope='col') Nama
+                    th(scope='col') Email
+                    th(scope='col') Phone
+                    th(scope='col') Detil
+            tbody
+                each pengguna in users
+                    tr
+                        td= pengguna.name
+                        td= pengguna.email
+                        td= pengguna.phone
+                        td
+                            a(href=`/users/${pengguna.id}`) Detil user
+    br
+    h3 List Masjid
+    table.highlight.centered
+        if user
+            thead
+                tr
+                    th(scope='col') Nama
+                    th(scope='col') Email
+                    th(scope='col') Phone
+                    th(scope='col') Detil
+            tbody
+                each mosque in mosques
+                    tr
+                        td= mosque.name
+                        td= mosque.email
+                        td= mosque.phone
+                        td
+                            a(href=`/mosques/${mosque.id}`) Detil user
+    br
