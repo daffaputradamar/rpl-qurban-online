@@ -1,6 +1,6 @@
 # Qurban Online
 
-First and foremost you need to install Node js.
+First and foremost you need to install `Nodejs`.
 
 ## Quick Start
 
